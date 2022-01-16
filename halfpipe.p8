@@ -103,7 +103,11 @@ end
 -- display score
 function display_score()
  print("score:"..skater.score, 2, 106, 0)
- print("high score:".."10000", 60, 106)
+ if skater.score > dget(1) then
+  print("high score:"..pad(tostr(skater.score), 5), 60, 106)
+ else
+  print("high score:"..pad(tostr(dget(1)), 5), 60, 106)
+ end 
 end
 
 
@@ -341,9 +345,11 @@ end
 function title_draw()
  cls()
  map(19)
- print("by mehmet koseoglu", 20, 60)
- print("press ❎ to start", 20, 70)
+ print("by mehmet koseoglu", 20, 60, 7)
+ print("press ❎ to start", 20, 70,7)
+ draw_scores(7)
 end
+
 
 
 
@@ -398,9 +404,16 @@ end
 function gameover_update()
  -- wait 2 seconds before starting new game
  time_i += 1
- if btn(5) and (time_i > wait*30) then
-  game_init()
+ if skater.score > dget(3) and not score_entered and (time_i > wait*15) then
+  input_score = true
+  enter_name(player_name, name_index)
+ else
+  
+  if btn(5) and (time_i > wait*30)then
+   game_init()
+  end
  end
+ 
 end
 
 -- gameover draw
@@ -408,9 +421,12 @@ function gameover_draw()
  -- gameover screen
  cls()
  map(37)
- print("game over", 20, 25)
- print("score: "..skater.score, 20, 40)
- print("to play again press ❎", 20, 55)
+ print("game over", 20, 25, 0)
+ print("score: "..skater.score, 20, 40, 0)
+ if score_entered then
+  print("to play again press ❎", 20, 55, 0)
+ end
+ draw_scores(0)
 end
 -->8
 -- particle effects
@@ -532,6 +548,202 @@ function increase_difficulty()
 end
 -->8
 -- scoreboard
+
+characters = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " " }
+input_score = false
+score_entered = false
+player_name = {1, 1, 1, 1, 1, 1}
+name_index = 1
+select_col = 1
+
+cartdata("mehmet_halfpipe_1")
+--32767 -- max val
+-- set start scores
+--[[
+dset(1, 30)
+dset(2, 20)
+dset(3, 10)
+
+dset(11, 1)
+dset(12, 1)
+dset(13, 1)
+dset(14, 1)
+dset(15, 1)
+dset(16, 1)
+
+dset(21, 1)
+dset(22, 1)
+dset(23, 1)
+dset(24, 1)
+dset(25, 1)
+dset(26, 1)
+
+dset(31, 1)
+dset(32, 1)
+dset(33, 1)
+dset(34, 1)
+dset(35, 1)
+dset(36, 1)
+]]--
+
+-- 1 = top score 
+-- 2 = 2nd score
+-- 3 = 3rd score
+-- 11,12,13,14,15,16 = 1st player
+-- 21,22,23,24,25,26 = 2nd player
+-- 31,32,33,34,35,36 = 3rd player
+
+
+-- convert char to int
+function char_to_int(char)
+	for k,v in pairs(characters) do
+		if (v == char) return k
+	end
+	return -1
+end
+
+
+-- convert int to char
+function int_to_char(int)
+	for k,v in pairs(characters) do
+		if (k == int) return v
+	end
+	return ""
+end
+
+
+-- zero padding
+function pad(string,length)
+ if (#string==length) return string
+ return "0"..pad(string, length-1)
+end
+
+
+
+-- print scoreboard in col color
+function draw_scores(col)
+ one_name, one_score = get_name_score(1)
+ two_name, two_score = get_name_score(2)
+ thr_name, thr_score = get_name_score(3)
+ if input_score then
+  select_col+= 1
+  local p_name = int_to_char(player_name[1])..int_to_char(player_name[2])..int_to_char(player_name[3])..int_to_char(player_name[4])..int_to_char(player_name[5])..int_to_char(player_name[6])
+  if select_col > 15 then select_col = 0 end
+  if skater.score > dget(1) then
+   print("1."..p_name.." ........... "..pad(tostr(skater.score), 5), 12, 90, select_col)
+   print("2."..one_name.." ........... "..pad(one_score, 5), 12, 97, col)
+   print("3."..two_name.." ........... "..pad(two_score, 5), 12, 104, col)
+  
+  elseif skater.score > dget(2) then
+   print("1."..one_name.." ........... "..pad(one_score, 5), 12, 90, col)
+   print("2."..p_name.." ........... "..pad(tostr(skater.score), 5), 12, 97, select_col)
+   print("3."..two_name.." ........... "..pad(two_score, 5), 12, 104, col)
+  
+  else
+   print("1."..one_name.." ........... "..pad(one_score, 5), 12, 90, col)
+   print("2."..two_name.." ........... "..pad(two_score, 5), 12, 97, col)
+   print("3."..p_name.." ........... "..pad(tostr(skater.score), 5), 12, 104, col)
+  end
+ else -- only viewing score
+  print("1."..one_name.." ........... "..pad(one_score, 5), 12, 90, col)
+  print("2."..two_name.." ........... "..pad(two_score, 5), 12, 97, col)
+  print("3."..thr_name.." ........... "..pad(thr_score, 5), 12, 104, col)
+ end
+end
+
+
+-- get name and score from position
+function get_name_score(pos)
+ if pos > 3 or pos < 1 then return nil, nil end
+ name = int_to_char(dget(pos*10+1))..int_to_char(dget(pos*10+2))..int_to_char(dget(pos*10+3))..int_to_char(dget(pos*10+4))..int_to_char(dget(pos*10+5))..int_to_char(dget(pos*10+6))
+ score = tostr(dget(pos))
+ return name, score
+end
+
+
+-- shift down entered position (only for 1st and 2nd)
+function shift_down(pos)
+ if pos == 1 or pos == 2 then
+  dset(pos+1, dget(pos))
+  for i=1,6 do
+   dset((pos+1)*10+i,dget(pos*10+i) )
+  end
+ end
+end
+
+
+-- enter name
+function enter_name(name_array)
+ if btnp(1) then
+  name_index+=1
+  if name_index == 7 then name_index = 1 end
+ end
+ if btnp(0) then
+  name_index-=1
+  if name_index == 0 then name_index = 6 end 
+ end
+ if btnp(2) then
+  name_array[name_index]+=1
+  if name_array[name_index] == 38 then name_array[name_index] = 1 end
+ end
+ if btnp(3) then
+  name_array[name_index]-=1
+  if name_array[name_index] == 0 then name_array[name_index] = 37 end
+ end
+ if btn(5) then 
+  set_new_score(skater.score, player_name) 
+ end
+end
+
+
+
+-- set new score
+function set_new_score(score, name_array)
+ if score > dget(1) then -- new high score
+  shift_down(2)
+  shift_down(1)
+  -- set name
+  for i=1, 6 do
+   dset(10+i, name_array[i])
+  end
+  -- set score
+  dset(1, score)
+ elseif score > dget(2) then -- new 2nd high score
+  shift_down(2)
+  -- set name
+  for i=1, 6 do
+   dset(20+i, name_array[i])
+  end
+  -- set score
+  dset(2, score)
+ elseif score > dget(3) then -- new 3rd high score
+  -- set name
+  for i=1, 6 do
+   dset(30+i, name_array[i])
+  end
+  -- set score
+  dset(3, score)
+ end
+ input_score = false
+ score_entered = true
+ time_i = 0
+end
+
+--[[
+function _update()
+ if player_score > dget(3) and not score_entered then
+  input_score = true
+  enter_name(player_name, name_index)
+ end
+end
+
+
+function _draw()
+ cls()
+ draw_scores(7)
+end
+]]--
+
 __gfx__
 0000000099999999aaaaaaaa00cccccccccccccccccccccccccccc0044444444099999994444444499999999444444449999999044444444cccccccc44444444
 0000000099999999aaaaaaaa9900cccccccccccccccccccccccc009944444444099999994444444499999999444444449999999044444444cccccccc44444444

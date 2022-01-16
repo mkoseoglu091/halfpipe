@@ -626,6 +626,8 @@ function draw_scores(col)
  two_name, two_score = get_name_score(2)
  thr_name, thr_score = get_name_score(3)
  if input_score then
+  print("press ❎ after entering your name", 20, 55, 0)
+
   select_col+= 1
   local p_name = int_to_char(player_name[1])..int_to_char(player_name[2])..int_to_char(player_name[3])..int_to_char(player_name[4])..int_to_char(player_name[5])..int_to_char(player_name[6])
   if select_col > 15 then select_col = 0 end
@@ -642,7 +644,7 @@ function draw_scores(col)
   else
    print("1."..one_name.." ........... "..pad(one_score, 5), 12, 90, col)
    print("2."..two_name.." ........... "..pad(two_score, 5), 12, 97, col)
-   print("3."..p_name.." ........... "..pad(tostr(skater.score), 5), 12, 104, col)
+   print("3."..p_name.." ........... "..pad(tostr(skater.score), 5), 12, 104, select_col)
   end
  else -- only viewing score
   print("1."..one_name.." ........... "..pad(one_score, 5), 12, 90, col)
@@ -699,6 +701,7 @@ end
 
 -- set new score
 function set_new_score(score, name_array)
+ if score > 32767 then score = 32767 end
  if score > dget(1) then -- new high score
   shift_down(2)
   shift_down(1)

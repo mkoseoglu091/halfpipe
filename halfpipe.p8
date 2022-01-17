@@ -332,6 +332,8 @@ end
 -- title init
 function title_init()
  mode = 0
+ init_scoreboard()
+
 end
 
 -- title update
@@ -362,6 +364,7 @@ function game_init()
  init_skater()
  init_tricks()
  init_dust()
+ init_scoreboard()
  timer = 0
 end
 
@@ -548,13 +551,15 @@ function increase_difficulty()
 end
 -->8
 -- scoreboard
+function init_scoreboard()
+ characters = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " " }
+ input_score = false
+ score_entered = false
+ player_name = {1, 1, 1, 1, 1, 1}
+ name_index = 1
+ select_col = 1
+end
 
-characters = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " " }
-input_score = false
-score_entered = false
-player_name = {1, 1, 1, 1, 1, 1}
-name_index = 1
-select_col = 1
 
 cartdata("mehmet_halfpipe_1")
 --32767 -- max val
